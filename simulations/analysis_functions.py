@@ -9,7 +9,7 @@ import pandas as pd
 
 def complete_analysis(cluster,scenarioName):
     
-    writer = pd.ExcelWriter('Results_'+scenarioName+'.xlsx')
+    writer = pd.ExcelWriter('Results_New1\Results_'+scenarioName+'.xlsx')
     
     #time_range=sorted(self.besdict[min(self.besdict.keys)].keys())
     #agg_dmnd=dict.fromkeys(time_range,values=np.zeros(self.timer.T))
@@ -30,17 +30,19 @@ def complete_analysis(cluster,scenarioName):
         q_hd2=bes.hd2.Q_gen
         q_tes=bes.tes.Q_gen
         soc=bes.tes.soc
+        
+        flex_use=bes.Act_F_use
          
         #To be able to calculate the number of switching events
         hd2_state=bes.hd2.state             #Find the state of the hd2 at each time step    
         hd2_fin_pos=pd.Series(hd2_state)    #Convert dictionary to pandas series for easy calculation
-        hd2_ini_pos=hd2_fin_pos.shift(1)     #Shift the series down to compare hd2_state in succesive time steps
+        hd2_ini_pos=hd2_fin_pos.shift(1)    #Shift the series down to compare hd2_state in succesive time steps
         
         #If hd2_state in two successive time steps are different; no switching event has taken place
         if_switched=abs(hd2_fin_pos-hd2_ini_pos).to_dict() 
         
-        besDF[b]=pd.DataFrame([p_dmnd,p_pv_gen,p_hd1,p_hd2,p_imp,q_dmnd,q_hd1,q_hd2,q_tes,soc,if_switched,p_pv_pot]).T
-        besDF[b].columns=['p_dmnd','p_pv_real','p_hd1','p_hd2','p_imp','q_dmnd','q_hd1','q_hd2','q_tes','tes_soc','switch','p_pv_pot']
+        besDF[b]=pd.DataFrame([p_dmnd,p_pv_gen,p_hd1,p_hd2,p_imp,q_dmnd,q_hd1,q_hd2,q_tes,soc,if_switched,p_pv_pot,flex_use]).T
+        besDF[b].columns=['p_dmnd','p_pv_real','p_hd1','p_hd2','p_imp','q_dmnd','q_hd1','q_hd2','q_tes','tes_soc','switch','p_pv_pot','flex_use']
         
         besDF[b].to_excel(writer,'bes'+str(b))
         

@@ -42,8 +42,8 @@ pnom_boiler=0
 qnom_boiler=7
 pnom_hp=-1.67
 qnom_hp=7.5
-pnom_chp=0.5
-qnom_chp=1
+pnom_chp=1.5
+qnom_chp=3
 pnom_no=0
 qnom_no=0.00001
     
@@ -110,7 +110,7 @@ besdict={1:BES1,2:BES2,3:BES3,4:BES4,5:BES5,
          6:BES6,7:BES7,8:BES8,9:BES9,10:BES10}
 
 mpcP=4
-trigger=-0.01
+trigger=-50
 aCluster=Cluster(aTimer,mpcP,trigger,besdict)
 
 #Assigning initial soc to the TES object
@@ -127,12 +127,12 @@ BES10.tes.set_soc(aTimer.start,0.3)
 
 #Assigning parameters to the forecast object
 project_folder=os.path.dirname(os.path.dirname(__file__))
-scenario_folder=os.path.join(project_folder,'test_scenarios','002')
+scenario_folder=os.path.join(project_folder,'test_scenarios','101')
 
 #Continuous simulation
-time_range=[aTimer.start+t*aTimer.dT for t in range(aTimer.T)]
+time_range=[aTimer.start+t*aTimer.dT for t in range(2)]
 for ts in time_range: 
-
+    
     print(ts)
     file_name=str(ts.strftime("%H_%M"))+'.xlsx'
     
@@ -148,9 +148,10 @@ for ts in time_range:
         besdict[b].forecast.set_PV_pot_forecast(ts,pv_forecast[b].values)
     
     aCluster.combined_method_d(ts,solver)
+    aCluster.aggregate_performance_indicators(ts)
     aTimer.updateTimer()
     
-
-complete_analysis(aCluster,'rescheduling_new')
+#%%
+complete_analysis(aCluster,'rescheduling')
 
 

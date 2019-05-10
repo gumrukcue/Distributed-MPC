@@ -54,57 +54,18 @@ timediscretization=900  #15 minutes
 reschedulinghorizon=96  #1 day   
 aTimer=Timer(2019,3,13,0,0,timediscretization,reschedulinghorizon)
 
-initialForecastFile='StartScenario2_Days.xlsx'
+initialForecastFile='paper_initialforecast.xlsx'
 xl_file = pd.ExcelFile(initialForecastFile)
 
-deviation_file='DeviationScenarios.xlsx'
+deviation_file='paper_deviations_1.xlsx'
 xl_file_dev   = pd.ExcelFile(deviation_file)
 pdemdeviation = xl_file_dev.parse('PDemDev')
 qdemdeviation = xl_file_dev.parse('QDemDev')
 pvpotdeviation= xl_file_dev.parse('PVPotDev')
 
-
-scenarioName='Scenarios/101'
+#%%
+scenarioName='Scenarios/paper_new'
 pDevDict =pdemdeviation[1]
 qDevDict =qdemdeviation[0]
 pvDevDict=pvpotdeviation[1]
 generate_scenario_data(aTimer,xl_file,pDevDict,qDevDict,pvDevDict,scenarioName)
-
-
-"""
-scenarioName='Scenarios/100'
-pDevDict =pdemdeviation[1]
-qDevDict =qdemdeviation[0]
-pvDevDict=pvpotdeviation[0]
-generate_scenario_data(aTimer,xl_file,pDevDict,qDevDict,pvDevDict,scenarioName)
-
-scenarioName='Scenarios/200'
-pDevDict =pdemdeviation[2]
-qDevDict =qdemdeviation[0]
-pvDevDict=pvpotdeviation[0]
-generate_scenario_data(aTimer,xl_file,pDevDict,qDevDict,pvDevDict,scenarioName)
-
-scenarioName='Scenarios/010'
-pDevDict =pdemdeviation[0]
-qDevDict =qdemdeviation[1]
-pvDevDict=pvpotdeviation[0]
-generate_scenario_data(aTimer,xl_file,pDevDict,qDevDict,pvDevDict,scenarioName)
-
-scenarioName='Scenarios/020'
-pDevDict =pdemdeviation[0]
-qDevDict =qdemdeviation[2]
-pvDevDict=pvpotdeviation[0]
-generate_scenario_data(aTimer,xl_file,pDevDict,qDevDict,pvDevDict,scenarioName)
-
-scenarioName='Scenarios/001'
-pDevDict =pdemdeviation[0]
-qDevDict =qdemdeviation[0]
-pvDevDict=pvpotdeviation[1]
-generate_scenario_data(aTimer,xl_file,pDevDict,qDevDict,pvDevDict,scenarioName)
-
-scenarioName='Scenarios/002'
-pDevDict =pdemdeviation[0]
-qDevDict =qdemdeviation[0]
-pvDevDict=pvpotdeviation[2]
-generate_scenario_data(aTimer,xl_file,pDevDict,qDevDict,pvDevDict,scenarioName)
-"""

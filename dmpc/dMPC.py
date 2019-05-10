@@ -89,7 +89,7 @@ class DMPC(object):
                 convergence=False
                 it+=1           #Go to the next iteration
         #print('Converged in:',end-start)   
-        print("DMPC converged after",it+1,"iterations")
+        #print("DMPC converged after",it+1,"iterations")
 
         converged_loc_curves=pd.DataFrame(temp_loc_curve)
         converged_loc_switch=pd.DataFrame(temp_loc_switch)

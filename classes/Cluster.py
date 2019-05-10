@@ -19,6 +19,8 @@ class Cluster(object):
 
     def __init__(self,timer,mpc_prediction_horizon,trigger,besdict,facilitydict=None):
         
+        self.initialstamp=timer.start
+        
         self.timer=timer
         self.mpc_prediction_horizon=mpc_prediction_horizon
         self.besdict=besdict
@@ -39,7 +41,27 @@ class Cluster(object):
         self.rescheduling_results={}
         self.dmpc_results={}
         self.hmpc_results={}
-    
+        
+        self.cluster_pv_potential ={}
+        self.cluster_pv_generation={}
+        self.cluster_p_demand     ={}
+        
+    def aggregate_performance_indicators(self,ki):
+        
+        if not ki==self.initialstamp:
+        
+            self.cluster_pv_potential[ki] =0
+            self.cluster_pv_generation[ki]=0
+            self.cluster_p_demand[ki]     =0
+           
+            for b in sorted(self.besdict.keys()):
+                bes=self.besdict[b]
+                pv=bes.pv
+                
+                self.cluster_pv_potential[ki]+=pv.P_Pot[ki]
+                self.cluster_pv_generation[ki]+=pv.P_Gen[ki]
+                self.cluster_p_demand[ki]+=bes.Act_P_demand[ki]
+                   
     def local_optimals(self,solver):
         #TODO: Works really slow in some cases
         
@@ -202,6 +224,8 @@ class Cluster(object):
 
         for b in sorted(self.besdict.keys()):            
 
+            #self.besdict[b].Act_F_use[ki]=
+            
             self.besdict[b].tes.set_gen(ki,self.rescheduling_results[ki][b]['Q_TES'][0])
             self.besdict[b].hd1.set_state(ki,self.rescheduling_results[ki][b]['Mod_hd1'][0])
             self.besdict[b].hd2.set_state(ki,self.rescheduling_results[ki][b]['Mod_hd2'][0])
@@ -216,13 +240,18 @@ class Cluster(object):
         
         for b in sorted(self.besdict.keys()):
             
+            self.besdict[b].Act_F_use[ki]=self.dmpc_results[dmpc_k]['Switching'][b][0]
+            
             real_mod_hd2=self.rescheduling_results[sch_k][b]['Mod_hd2'][ts_shift]+self.dmpc_results[dmpc_k]['Switching'][b][0]
             real_q_tes=self.rescheduling_results[sch_k][b]['Q_TES'][ts_shift]-real_mod_hd2*self.besdict[b].hd2.Qnom
+            real_pv=min(self.rescheduling_results[sch_k][b]['PV_Gen'][ts_shift],self.besdict[b].forecast.PV[dmpc_k][0])
             
             self.besdict[b].tes.set_gen(dmpc_k,real_q_tes)
             self.besdict[b].hd1.set_state(dmpc_k,self.rescheduling_results[sch_k][b]['Mod_hd1'][ts_shift])
             self.besdict[b].hd2.set_state(dmpc_k,real_mod_hd2)
-            self.besdict[b].pv.set_gen(dmpc_k,self.rescheduling_results[sch_k][b]['PV_Gen'][ts_shift])           
+            
+            #self.besdict[b].pv.set_gen(dmpc_k,self.rescheduling_results[sch_k][b]['PV_Gen'][ts_shift])           
+            self.besdict[b].pv.set_gen(dmpc_k,real_pv)
             self.besdict[b].calculate_net_p_import(dmpc_k)
                 
     def simulate_hmpc(self,ki):
@@ -233,13 +262,19 @@ class Cluster(object):
         
         for b in sorted(self.besdict.keys()):
             
+            self.besdict[b].Act_F_use[ki]=self.hmpc_results[hmpc_k]['Switching'][b][0]
+            
             real_mod_hd2=self.rescheduling_results[sch_k][b]['Mod_hd2'][ts_shift]+self.hmpc_results[hmpc_k]['Switching'][b][0]
             real_q_tes=self.rescheduling_results[sch_k][b]['Q_TES'][ts_shift]-real_mod_hd2*self.besdict[b].hd2.Qnom
+            real_pv=min(self.rescheduling_results[sch_k][b]['PV_Gen'][ts_shift],self.besdict[b].forecast.PV[hmpc_k][0])
+            
             
             self.besdict[b].tes.set_gen(hmpc_k,real_q_tes)
             self.besdict[b].hd1.set_state(hmpc_k,self.rescheduling_results[sch_k][b]['Mod_hd1'][ts_shift])
             self.besdict[b].hd2.set_state(hmpc_k,real_mod_hd2)
-            self.besdict[b].pv.set_gen(hmpc_k,self.rescheduling_results[sch_k][b]['PV_Gen'][ts_shift])
+            
+            #self.besdict[b].pv.set_gen(hmpc_k,self.rescheduling_results[sch_k][b]['PV_Gen'][ts_shift])
+            self.besdict[b].pv.set_gen(hmpc_k,real_pv)
             self.besdict[b].calculate_net_p_import(hmpc_k)
         
         

@@ -38,6 +38,8 @@ class BES(object):
         self.Act_Q_demand={}      
         self.Act_P_Import={}
         
+        self.Act_F_use={}
+        
     #Functions for data handling
     def set_act_p_demand(self,ki,P):
         self.Act_P_demand[ki]=P
