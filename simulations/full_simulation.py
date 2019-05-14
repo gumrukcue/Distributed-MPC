@@ -21,6 +21,7 @@ from rescheduling.localoptimization import BESOptimizer
 from rescheduling.clusteroptimization import ClusterOptimizer
 from simulations.analysis_functions import complete_analysis
 
+#%%
 solver= SolverFactory("gurobi")
 timediscretization=900  #15 minutes
 reschedulinghorizon=96  #1 day   
@@ -43,7 +44,7 @@ qnom_boiler=7
 pnom_hp=-1.67
 qnom_hp=7.5
 pnom_chp=0.5
-qnom_chp=1
+qnom_chp=1.5
 pnom_no=0
 qnom_no=0.00001
     
@@ -110,7 +111,7 @@ besdict={1:BES1,2:BES2,3:BES3,4:BES4,5:BES5,
          6:BES6,7:BES7,8:BES8,9:BES9,10:BES10}
 
 mpcP=4
-trigger=-0.01
+trigger=-10.01
 aCluster=Cluster(aTimer,mpcP,trigger,besdict)
 
 #Assigning initial soc to the TES object
@@ -127,12 +128,12 @@ BES10.tes.set_soc(aTimer.start,0.3)
 
 #Assigning parameters to the forecast object
 project_folder=os.path.dirname(os.path.dirname(__file__))
-scenario_folder=os.path.join(project_folder,'test_scenarios','002')
+scenario_folder=os.path.join(project_folder,'test_scenarios','001')
 
 #Continuous simulation
-time_range=[aTimer.start+t*aTimer.dT for t in range(aTimer.T)]
+time_range=[aTimer.start+t*aTimer.dT for t in range(2)]#aTimer.T)]
 for ts in time_range: 
-
+    
     print(ts)
     file_name=str(ts.strftime("%H_%M"))+'.xlsx'
     
@@ -148,9 +149,15 @@ for ts in time_range:
         besdict[b].forecast.set_PV_pot_forecast(ts,pv_forecast[b].values)
     
     aCluster.combined_method_d(ts,solver)
+    aCluster.aggregate_performance_indicators(ts)
     aTimer.updateTimer()
     
-
-complete_analysis(aCluster,'rescheduling_new')
-
-
+#%%
+#complete_analysis(aCluster,'dmpc_0.01')
+df_clst=aCluster.cluster_optimal_cluster_curve[aCluster.initialstamp]
+df_sepe=aCluster.cluster_optimal_schedules[aCluster.initialstamp]
+df_flex=aCluster.cluster_optimal_flexibilities[aCluster.initialstamp]
+writer=pd.ExcelWriter('Please.xlsx')
+#df_clst.to_excel(writer,'Cluster')
+df_sepe.to_excel(writer,'Import')
+df_flex.to_excel(writer,'Flex')

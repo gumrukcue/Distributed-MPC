@@ -22,7 +22,7 @@ worksheets[3]=xl_file.parse("Tabelle3")
 worksheets[4]=xl_file.parse("Tabelle4")
 worksheets[5]=xl_file.parse("Tabelle5")
 
-predictionHorizon=16
+predictionHorizon=4
 forecast_dict={}
 deviation_dict={}
 flexibility_dict={}

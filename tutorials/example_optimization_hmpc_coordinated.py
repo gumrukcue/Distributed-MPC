@@ -22,15 +22,20 @@ worksheets[2]=xl_file.parse("Tabelle2")
 worksheets[3]=xl_file.parse("Tabelle3")
 worksheets[4]=xl_file.parse("Tabelle4")
 worksheets[5]=xl_file.parse("Tabelle5")
+worksheets[6]=xl_file.parse("Tabelle6")
+worksheets[7]=xl_file.parse("Tabelle7")
+worksheets[8]=xl_file.parse("Tabelle8")
+worksheets[9]=xl_file.parse("Tabelle9")
+worksheets[10]=xl_file.parse("Tabelle10")
 
-predictionHorizon=16
+predictionHorizon=4
 forecast_dict={}
 deviation_dict={}
 flexibility_dict={}
 
 aggregated_curve_reference=np.zeros(predictionHorizon)
 aggregated_curve_uncontrolled=np.zeros(predictionHorizon)
-for i in range(1,6):
+for i in range(1,11):
     forecast_dict[i]=worksheets[i]['Forecast'].values
     deviation_dict[i]=worksheets[i]['Deviation'].values
     flexibility_dict[i]=worksheets[i]['Flexibility'].values

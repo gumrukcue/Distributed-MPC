@@ -7,6 +7,7 @@ Created on Mon Mar 18 09:14:51 2019
 
 import pandas as pd
 import numpy as np
+import os
 
 from classes.BES import BES
 from classes.Forecast import Forecast
@@ -83,29 +84,36 @@ BES5.tes.set_soc(aTimer.start,0.9)
 BES6.tes.set_soc(aTimer.start,0.7)
 
 #Assigning parameters to the forecast object
-filename='data_forecasts.xlsx'
+project_folder=os.path.dirname(os.path.dirname(__file__))
+scenario_folder=os.path.join(project_folder,'test_scenarios','002')
+file="00_00.xlsx"
+filename=os.path.join(scenario_folder,file)
 xl_file = pd.ExcelFile(filename)
-df_forecast=xl_file.parse('Example')
-BES1.forecast.set_P_demand_forecast(aTimer.start,df_forecast['P_Dmnd'].values)
-BES2.forecast.set_P_demand_forecast(aTimer.start,df_forecast['P_Dmnd'].values)
-BES3.forecast.set_P_demand_forecast(aTimer.start,df_forecast['P_Dmnd'].values)
-BES4.forecast.set_P_demand_forecast(aTimer.start,df_forecast['P_Dmnd'].values)
-BES5.forecast.set_P_demand_forecast(aTimer.start,df_forecast['P_Dmnd'].values)
-BES6.forecast.set_P_demand_forecast(aTimer.start,df_forecast['P_Dmnd'].values)
+p_forecast =xl_file.parse('P_Demand')
+q_forecast =xl_file.parse('Q_Demand')
+pv_forecast=xl_file.parse('PV_Gen')
 
-BES1.forecast.set_Q_demand_forecast(aTimer.start,df_forecast['Q_Dmnd'].values)
-BES2.forecast.set_Q_demand_forecast(aTimer.start,df_forecast['Q_Dmnd'].values)
-BES3.forecast.set_Q_demand_forecast(aTimer.start,df_forecast['Q_Dmnd'].values)
-BES4.forecast.set_Q_demand_forecast(aTimer.start,df_forecast['Q_Dmnd'].values)
-BES5.forecast.set_Q_demand_forecast(aTimer.start,df_forecast['Q_Dmnd'].values)
-BES6.forecast.set_Q_demand_forecast(aTimer.start,df_forecast['Q_Dmnd'].values)
 
-BES1.forecast.set_PV_pot_forecast(aTimer.start,df_forecast['PV_Gen'].values)
-BES2.forecast.set_PV_pot_forecast(aTimer.start,df_forecast['PV_Gen'].values)
-BES3.forecast.set_PV_pot_forecast(aTimer.start,df_forecast['PV_Gen'].values)
-BES4.forecast.set_PV_pot_forecast(aTimer.start,df_forecast['PV_Gen'].values)
-BES5.forecast.set_PV_pot_forecast(aTimer.start,df_forecast['PV_Gen'].values)
-BES6.forecast.set_PV_pot_forecast(aTimer.start,df_forecast['PV_Gen'].values)
+BES1.forecast.set_P_demand_forecast(aTimer.start,p_forecast[1].values)
+BES2.forecast.set_P_demand_forecast(aTimer.start,p_forecast[2].values)
+BES3.forecast.set_P_demand_forecast(aTimer.start,p_forecast[3].values)
+BES4.forecast.set_P_demand_forecast(aTimer.start,p_forecast[4].values)
+BES5.forecast.set_P_demand_forecast(aTimer.start,p_forecast[5].values)
+BES6.forecast.set_P_demand_forecast(aTimer.start,p_forecast[6].values)
+
+BES1.forecast.set_Q_demand_forecast(aTimer.start,q_forecast[1].values)
+BES2.forecast.set_Q_demand_forecast(aTimer.start,q_forecast[2].values)
+BES3.forecast.set_Q_demand_forecast(aTimer.start,q_forecast[3].values)
+BES4.forecast.set_Q_demand_forecast(aTimer.start,q_forecast[4].values)
+BES5.forecast.set_Q_demand_forecast(aTimer.start,q_forecast[5].values)
+BES6.forecast.set_Q_demand_forecast(aTimer.start,q_forecast[6].values)
+
+BES1.forecast.set_PV_pot_forecast(aTimer.start,pv_forecast[1].values)
+BES2.forecast.set_PV_pot_forecast(aTimer.start,pv_forecast[2].values)
+BES3.forecast.set_PV_pot_forecast(aTimer.start,pv_forecast[3].values)
+BES4.forecast.set_PV_pot_forecast(aTimer.start,pv_forecast[4].values)
+BES5.forecast.set_PV_pot_forecast(aTimer.start,pv_forecast[5].values)
+BES6.forecast.set_PV_pot_forecast(aTimer.start,pv_forecast[6].values)
 
 #Choose a solver
 from pyomo.environ import *
